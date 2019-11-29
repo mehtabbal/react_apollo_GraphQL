@@ -1,5 +1,3 @@
-import { gql } from 'apollo-server'
-
 const characters = [
   {
     id: '1',
