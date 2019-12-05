@@ -1,39 +1,82 @@
 import React from 'react'
-
-import Button from '@material-ui/core/Button'
+import { useMutation } from '@apollo/react-hooks'
 import OutlinedInput from '@material-ui/core/OutlinedInput'
-import Select from '@material-ui/core/Select'
+import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
-const AddDevice = () => {
+import { ADD_DEVICE, GET_DEVICES } from '../../queries'
+import { Select } from '@material-ui/core'
+
+const AddDevice = ({ id, year, brand, model, price, category, onInputChange }) => {
+  const [addDevice] = useMutation(
+    ADD_DEVICE,
+    {
+      update(cache, { data: { addDevice } }) {
+        const { devices } = cache.readQuery({ query: GET_DEVICES })
+        cache.writeQuery({
+          query: GET_DEVICES,
+          data: { devices: devices.concat([addDevice])}
+        })
+      }
+    }
+  )
+
   return (
-    <form>
-     <TextField
-        label='Year'
-        defaultValue='2019'
-        placeholder='i.e. 2019'
-        type='number'
-        margin='normal'
-        variant='outlined'
-        style={{ display: 'flex', margin: '10px' }}
+    <form onSubmit={e => {
+      e.preventDefault()
+      addDevice({
+        variables: {
+          id, year, brand, model, price, category
+        },
+        optimisticResponse: {
+          __typename: 'Mutation',
+          addDevice: {
+            __typename: 'Device',
+            id,
+            year,
+            brand,
+            model,
+            price,
+            category
+          }
+        }
+      })
+    }}>
+      <TextField
+       label='Year'
+       defaultValue='2019'
+       placeholder='i.e. 2019'
+       type='number'
+       margin='normal'
+       variant='outlined'
+       style={{ display: 'flex', margin: '10px' }}
+        onChange={e => onInputChange('year', e.target.value)}
+ 
       />
+    
       <TextField
         label='Brand'
-        defaultValue='Apple'
-        placeholder='i.e. Apple'
+        value={brand}
+        placeholder='Brand'
+        onChange={e => onInputChange('brand', e.target.value)}
         margin='normal'
         variant='outlined'
         style={{ display: 'flex', margin: '10px' }}
       />
       <TextField
-        label='Model'
-        defaultValue='iPhone'
-        placeholder='i.e. iPhone'
-        margin='normal'
-        variant='outlined'
-        style={{ display: 'flex', margin: '10px' }}
+    
+      label='Model'
+      defaultValue='Apple'
+      placeholder='i.e. Apple'
+      margin='normal'
+      variant='outlined'
+      style={{ display: 'flex', margin: '10px' }}
+      onChange={e => onInputChange('model', e.target.value)}
       />
-      <TextField
+
+    <TextField
+       
+        onChange={e => onInputChange('price', e.target.value)}
         label='Price'
         defaultValue='1500'
         placeholder='i.e. 1500'
@@ -41,7 +84,9 @@ const AddDevice = () => {
         margin='normal'
         variant='outlined'
         style={{ display: 'flex', margin: '10px' }}
+       
       />
+      
       <Select
         native
         defaultValue='1'
@@ -53,6 +98,11 @@ const AddDevice = () => {
       >
         <option value='id'>John Smith</option>
       </Select>
+      
+      
+      
+      
+
       <Button
         type='submit'
         variant='contained'
@@ -64,5 +114,4 @@ const AddDevice = () => {
     </form>
   )
 }
-
 export default AddDevice

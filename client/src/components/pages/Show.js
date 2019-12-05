@@ -1,14 +1,13 @@
 import React, { Fragment } from 'react'
+import { Link } from 'react-router-dom'
 import Currency from 'react-currency-formatter'
-
+import CardActions from '@material-ui/core/CardActions'
 import Button from '@material-ui/core/Button'
 import CardActions from '@material-ui/core/CardActions'
 import Container from '@material-ui/core/Container'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import { makeStyles } from '@material-ui/core/styles'
-
-
 import DisplayCard from '../cards/DisplayCard'
 import '../../App'
 
@@ -27,15 +26,15 @@ const Show = () => {
         <Fragment>
           <ListItem>
             <ListItemText
-              primary='John Smith'
+              primary={fullName}
             />
           </ListItem>
           <ul>
             <DisplayCard>
               <ListItem>
                 <ListItemText
-                  primary='2019 Apple iPhone'
-                  secondary={<Currency quantity='5000' currency='CAD' />}
+                  primary={fullName}
+                  secondary={fullName}
                 />
               </ListItem>
             </DisplayCard>
@@ -43,7 +42,13 @@ const Show = () => {
         </Fragment>
         <CardActions>
           <Button color='primary' size='small' variant='outlined'>
+          <Link to={{
+              pathname: '/',
+              state: { character: fullName }
+            }}
+            >
             Go Back Home
+            </Link>
           </Button>
         </CardActions>
       </DisplayCard>
